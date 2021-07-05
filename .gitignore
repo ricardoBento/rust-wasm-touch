@@ -1,6 +1,12 @@
-/target
 **/*.rs.bk
 Cargo.lock
 bin/
 pkg/
 wasm-pack.log
+
+target/
+.idea/
+.cargo/
+.DS_Store
+
+build/web/

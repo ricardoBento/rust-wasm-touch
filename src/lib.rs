@@ -1,19 +1,29 @@
-mod utils;
+// disable console on windows for release builds
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use wasm_bindgen::prelude::*;
+#[cfg(target_arch = "wasm32")]
+use bevy_webgl2;
 
-// When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
-// allocator.
-#[cfg(feature = "wee_alloc")]
-#[global_allocator]
-static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
+use bevy::prelude::{App, ClearColor, Color, WindowDescriptor};
+use bevy::DefaultPlugins;
+use game_plugin::GamePlugin;
 
-#[wasm_bindgen]
-extern {
-    fn alert(s: &str);
-}
+fn main() {
+    let mut app = App::build();
+    app
+        // .insert_resource(Msaa { samples: 4 })
+        .insert_resource(ClearColor(Color::rgb(0.4, 0.4, 0.4)))
+        .insert_resource(WindowDescriptor {
+            width: 800.,
+            height: 600.,
+            title: "Bevy game".to_string(), // ToDo
+            ..Default::default()
+        })
+        .add_plugins(DefaultPlugins)
+        .add_plugin(GamePlugin);
 
-#[wasm_bindgen]
-pub fn greet() {
-    alert("Hello, rust-wasm-touch!!!!!");
+    #[cfg(target_arch = "wasm32")]
+    app.add_plugin(bevy_webgl2::WebGL2Plugin);
+
+    app.run();
 }
